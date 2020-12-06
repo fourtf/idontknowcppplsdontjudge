@@ -93,8 +93,7 @@ ImageLayoutElement::ImageLayoutElement(MessageElement &creator, ImagePtr image,
     this->trailingSpace = creator.hasTrailingSpace();
 }
 
-void ImageLayoutElement::addCopyTextToString(QString &str, int from,
-                                             int to) const
+void ImageLayoutElement::addCopyTextToString(QString &str, int, int) const
 {
     const auto *emoteElement =
         dynamic_cast<EmoteElement *>(&this->getCreator());
@@ -147,7 +146,7 @@ void ImageLayoutElement::paintAnimated(QPainter &painter, int yOffset)
     }
 }
 
-int ImageLayoutElement::getMouseOverIndex(const QPoint &abs) const
+int ImageLayoutElement::getMouseOverIndex(const QPoint &) const
 {
     return 0;
 }
@@ -331,8 +330,7 @@ TextIconLayoutElement::TextIconLayoutElement(MessageElement &creator,
 {
 }
 
-void TextIconLayoutElement::addCopyTextToString(QString &str, int from,
-                                                int to) const
+void TextIconLayoutElement::addCopyTextToString(QString &, int, int) const
 {
 }
 
@@ -374,7 +372,7 @@ void TextIconLayoutElement::paintAnimated(QPainter &painter, int yOffset)
 {
 }
 
-int TextIconLayoutElement::getMouseOverIndex(const QPoint &abs) const
+int TextIconLayoutElement::getMouseOverIndex(const QPoint &) const
 {
     return 0;
 }

@@ -261,7 +261,7 @@ bool Channel::canSendMessage() const
     return false;
 }
 
-void Channel::sendMessage(const QString &message)
+void Channel::sendMessage(const QString &)
 {
 }
 

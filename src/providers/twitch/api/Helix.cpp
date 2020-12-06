@@ -46,7 +46,7 @@ void Helix::fetchUsers(QStringList userIds, QStringList userLogins,
 
             return Success;
         })
-        .onError([failureCallback](auto result) {
+        .onError([failureCallback](auto) {
             // TODO: make better xd
             failureCallback();
         })
@@ -125,7 +125,7 @@ void Helix::fetchUsersFollows(
             successCallback(HelixUsersFollowsResponse(root));
             return Success;
         })
-        .onError([failureCallback](auto result) {
+        .onError([failureCallback](auto) {
             // TODO: make better xd
             failureCallback();
         })
@@ -198,7 +198,7 @@ void Helix::fetchStreams(
 
             return Success;
         })
-        .onError([failureCallback](auto result) {
+        .onError([failureCallback](auto) {
             // TODO: make better xd
             failureCallback();
         })
@@ -288,7 +288,7 @@ void Helix::fetchGames(QStringList gameIds, QStringList gameNames,
 
             return Success;
         })
-        .onError([failureCallback](auto result) {
+        .onError([failureCallback](auto) {
             // TODO: make better xd
             failureCallback();
         })
@@ -319,7 +319,7 @@ NetworkRequest Helix::makeRequest(QString url, QUrlQuery urlQuery)
 {
     assert(!url.startsWith("/"));
 
-    if (this->clientId.isEmpty())
+    if (this->hclientId.isEmpty())
     {
         qCDebug(chatterinoTwitch)
             << "Helix::makeRequest called without a client ID set BabyRage";
@@ -342,14 +342,14 @@ NetworkRequest Helix::makeRequest(QString url, QUrlQuery urlQuery)
     return NetworkRequest(fullUrl)
         .timeout(5 * 1000)
         .header("Accept", "application/json")
-        .header("Client-ID", this->clientId)
+        .header("Client-ID", this->hclientId)
         .header("Authorization", "Bearer " + this->oauthToken);
 }
 
-void Helix::update(QString clientId, QString oauthToken)
+void Helix::update(QString clientId, QString hoauthToken)
 {
-    this->clientId = clientId;
-    this->oauthToken = oauthToken;
+    this->hclientId = clientId;
+    this->oauthToken = hoauthToken;
 }
 
 void Helix::initialize()

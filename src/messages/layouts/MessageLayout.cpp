@@ -63,7 +63,7 @@ int MessageLayout::getHeight() const
 
 // Layout
 // return true if redraw is required
-bool MessageLayout::layout(int width, float scale, MessageElementFlags flags)
+bool MessageLayout::layout(int width, float scale, MessageElementFlags msgflags)
 {
     //    BenchmarkGuard benchmark("MessageLayout::layout()");
 
@@ -85,8 +85,8 @@ bool MessageLayout::layout(int width, float scale, MessageElementFlags flags)
     }
 
     // check if work mask changed
-    layoutRequired |= this->currentWordFlags_ != flags;
-    this->currentWordFlags_ = flags;  // getSettings()->getWordTypeMask();
+    layoutRequired |= this->currentWordFlags_ != msgflags;
+    this->currentWordFlags_ = msgflags;  // getSettings()->getWordTypeMask();
 
     // check if layout was requested manually
     layoutRequired |= this->flags.has(MessageLayoutFlag::RequiresLayout);
@@ -102,7 +102,7 @@ bool MessageLayout::layout(int width, float scale, MessageElementFlags flags)
     }
 
     int oldHeight = this->container_->getHeight();
-    this->actuallyLayout(width, flags);
+    this->actuallyLayout(width, msgflags);
     if (widthChanged || this->container_->getHeight() != oldHeight)
     {
         this->deleteBuffer();
@@ -112,13 +112,13 @@ bool MessageLayout::layout(int width, float scale, MessageElementFlags flags)
     return true;
 }
 
-void MessageLayout::actuallyLayout(int width, MessageElementFlags flags)
+void MessageLayout::actuallyLayout(int width, MessageElementFlags mflags)
 {
     this->layoutCount_++;
     auto messageFlags = this->message_->flags;
 
     if (this->flags.has(MessageLayoutFlag::Expanded) ||
-        (flags.has(MessageElementFlag::ModeratorTools) &&
+        (mflags.has(MessageElementFlag::ModeratorTools) &&
          !this->message_->flags.has(MessageFlag::Disabled)))
     {
         messageFlags.unset(MessageFlag::Collapsed);
@@ -146,7 +146,7 @@ void MessageLayout::actuallyLayout(int width, MessageElementFlags flags)
             continue;
         }
 
-        element->addToContainer(*this->container_, flags);
+        element->addToContainer(*this->container_, mflags);
     }
 
     if (this->height_ != this->container_->getHeight())

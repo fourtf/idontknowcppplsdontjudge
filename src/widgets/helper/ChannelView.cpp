@@ -869,7 +869,7 @@ void ChannelView::messageAddedAtStart(std::vector<MessagePtr> &messages)
     this->queueLayout();
 }
 
-void ChannelView::messageRemoveFromStart(MessagePtr &message)
+void ChannelView::messageRemoveFromStart(MessagePtr &)
 {
     if (this->paused())
     {
@@ -1441,8 +1441,7 @@ void ChannelView::mouseMoveEvent(QMouseEvent *event)
                 std::weak_ptr<MessageLayout> weakLayout = layout;
                 LinkResolver::getLinkInfo(
                     element->getLink().value, nullptr,
-                    [weakLayout, element](QString tooltipText,
-                                          Link originalLink,
+                    [weakLayout, element](QString tooltipText, Link,
                                           ImagePtr thumbnail) {
                         auto shared = weakLayout.lock();
                         if (!shared)

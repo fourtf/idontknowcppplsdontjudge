@@ -109,8 +109,7 @@ EmptyElement::EmptyElement()
 {
 }
 
-void EmptyElement::addToContainer(MessageLayoutContainer &container,
-                                  MessageElementFlags flags)
+void EmptyElement::addToContainer(MessageLayoutContainer &, MessageElementFlags)
 {
 }
 
@@ -474,7 +473,6 @@ IrcTextElement::IrcTextElement(const QString &fullText,
     {
         std::vector<Segment> segments;
 
-        int pos = 0;
         int lastPos = 0;
 
         auto i = IRC_COLOR_PARSE_REGEX.globalMatch(text);
@@ -553,7 +551,7 @@ void IrcTextElement::addToContainer(MessageLayoutContainer &container,
         {
             auto getTextLayoutElement = [&](QString text,
                                             std::vector<Segment> segments,
-                                            int width, bool hasTrailingSpace) {
+                                            int width, bool) {
                 std::vector<PajSegment> xd{};
 
                 for (const auto &segment : segments)

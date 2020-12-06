@@ -408,7 +408,7 @@ void Split::insertTextToInput(const QString &text)
     this->input_->insertText(text);
 }
 
-void Split::showChangeChannelPopup(const char *dialogTitle, bool empty,
+void Split::showChangeChannelPopup(const char *, bool empty,
                                    std::function<void(bool)> callback)
 {
     if (this->selectChannelDialog_.hasElement())
@@ -469,18 +469,18 @@ void Split::paintEvent(QPaintEvent *)
     painter.fillRect(this->rect(), this->theme->splits.background);
 }
 
-void Split::mouseMoveEvent(QMouseEvent *event)
+void Split::mouseMoveEvent(QMouseEvent *)
 {
     this->handleModifiers(QGuiApplication::queryKeyboardModifiers());
 }
 
-void Split::keyPressEvent(QKeyEvent *event)
+void Split::keyPressEvent(QKeyEvent *)
 {
     this->view_->unsetCursor();
     this->handleModifiers(QGuiApplication::queryKeyboardModifiers());
 }
 
-void Split::keyReleaseEvent(QKeyEvent *event)
+void Split::keyReleaseEvent(QKeyEvent *)
 {
     this->view_->unsetCursor();
     this->handleModifiers(QGuiApplication::queryKeyboardModifiers());
@@ -496,7 +496,7 @@ void Split::resizeEvent(QResizeEvent *event)
     this->overlay_->setGeometry(this->rect());
 }
 
-void Split::enterEvent(QEvent *event)
+void Split::enterEvent(QEvent *)
 {
     this->isMouseOver_ = true;
 
@@ -514,7 +514,7 @@ void Split::enterEvent(QEvent *event)
     }
 }
 
-void Split::leaveEvent(QEvent *event)
+void Split::leaveEvent(QEvent *)
 {
     this->isMouseOver_ = false;
 

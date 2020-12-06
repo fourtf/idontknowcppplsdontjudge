@@ -734,8 +734,6 @@ void SplitContainer::applyFromDescriptorRecursively(
 
         bool vertical = containerNode.vertical_;
 
-        Direction direction = vertical ? Direction::Below : Direction::Right;
-
         node->type_ =
             vertical ? Node::VerticalContainer : Node::HorizontalContainer;
 
@@ -743,12 +741,12 @@ void SplitContainer::applyFromDescriptorRecursively(
         {
             if (std::holds_alternative<SplitNodeDescriptor>(item))
             {
-                auto *n = std::get_if<SplitNodeDescriptor>(&item);
-                if (!n)
+                auto *nn = std::get_if<SplitNodeDescriptor>(&item);
+                if (!nn)
                 {
                     return;
                 }
-                const auto &splitNode = *n;
+                const auto &splitNode = *nn;
                 auto *split = new Split(this);
                 split->setChannel(WindowManager::decodeChannel(splitNode));
                 split->setModerationMode(splitNode.moderationMode_);

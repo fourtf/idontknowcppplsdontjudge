@@ -107,14 +107,14 @@ void SplitInput::initLayout()
 
     // textEditLength visibility
     getSettings()->showMessageLength.connect(
-        [this](const bool &value, auto) {
+        [this](const bool &, auto) {
             // this->ui_.textEditLength->setHidden(!value);
             this->editTextChanged();
         },
         this->managedConnections_);
 }
 
-void SplitInput::scaleChangedEvent(float scale)
+void SplitInput::scaleChangedEvent(float)
 {
     // update the icon size of the emote button
     this->updateEmoteButton();

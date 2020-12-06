@@ -276,7 +276,7 @@ void TwitchAccount::unignoreByID(
 void TwitchAccount::checkFollow(const QString targetUserID,
                                 std::function<void(FollowResult)> onFinished)
 {
-    const auto onResponse = [onFinished](bool following, const auto &record) {
+    const auto onResponse = [onFinished](bool following, const auto &) {
         if (!following)
         {
             onFinished(FollowResult_NotFollowing);
@@ -299,7 +299,7 @@ void TwitchAccount::followUser(const QString userID,
     NetworkRequest(requestUrl, NetworkRequestType::Put)
 
         .authorizeTwitchV5(this->getOAuthClient(), this->getOAuthToken())
-        .onSuccess([successCallback](auto result) -> Outcome {
+        .onSuccess([successCallback](auto) -> Outcome {
             // TODO: Properly check result of follow request
             successCallback();
 
@@ -323,7 +323,7 @@ void TwitchAccount::unfollowUser(const QString userID,
                 successCallback();
             }
         })
-        .onSuccess([successCallback](const auto &document) -> Outcome {
+        .onSuccess([successCallback](const auto &) -> Outcome {
             successCallback();
 
             return Success;

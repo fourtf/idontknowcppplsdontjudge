@@ -228,15 +228,16 @@ void CommandController::initialize(Settings &, Paths &paths)
         this->items_.append(command);
     }
 
-    this->registerCommand("/debug-args", [](const auto &words, auto channel) {
-        QString msg = QApplication::instance()->arguments().join(' ');
+    this->registerCommand(
+        "/debug-args", [](const auto & /* words */, auto channel) {
+            QString msg = QApplication::instance()->arguments().join(' ');
 
-        channel->addMessage(makeSystemMessage(msg));
+            channel->addMessage(makeSystemMessage(msg));
 
-        return "";
-    });
+            return "";
+        });
 
-    this->registerCommand("/uptime", [](const auto &words, auto channel) {
+    this->registerCommand("/uptime", [](const auto &, auto channel) {
         auto *twitchChannel = dynamic_cast<TwitchChannel *>(channel.get());
         if (twitchChannel == nullptr)
         {
@@ -273,10 +274,9 @@ void CommandController::initialize(Settings &, Paths &paths)
             return "";
         }
 
-        user->ignore(target,
-                     [channel](auto resultCode, const QString &message) {
-                         channel->addMessage(makeSystemMessage(message));
-                     });
+        user->ignore(target, [channel](auto, const QString &message) {
+            channel->addMessage(makeSystemMessage(message));
+        });
 
         return "";
     });
@@ -299,10 +299,9 @@ void CommandController::initialize(Settings &, Paths &paths)
             return "";
         }
 
-        user->unignore(target,
-                       [channel](auto resultCode, const QString &message) {
-                           channel->addMessage(makeSystemMessage(message));
-                       });
+        user->unignore(target, [channel](auto, const QString &message) {
+            channel->addMessage(makeSystemMessage(message));
+        });
 
         return "";
     });
