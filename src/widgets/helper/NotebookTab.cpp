@@ -223,6 +223,7 @@ void NotebookTab::setSelected(bool value)
     this->selected_ = value;
 
     this->highlightState_ = HighlightState::None;
+    this->highlightColor_ = nullptr;
 
     this->update();
 }
@@ -269,6 +270,15 @@ void NotebookTab::setHighlightsEnabled(const bool &newVal)
 bool NotebookTab::hasHighlightsEnabled() const
 {
     return this->highlightEnabled_;
+}
+
+void NotebookTab::setHighlightColor(std::shared_ptr<QColor> color)
+{
+    if (this->highlightColor_ != color)
+    {
+        this->highlightColor_ = color;
+        this->update();
+    }
 }
 
 QRect NotebookTab::getDesiredRect() const
@@ -348,6 +358,14 @@ void NotebookTab::paintEvent(QPaintEvent *)
     bgRect.setTop(ceil((this->selected_ ? 0.f : 1.f) * scale));
 
     painter.fillRect(bgRect, tabBackground);
+
+    if (this->highlightState_ == HighlightState::Highlighted &&
+        this->highlightColor_ != nullptr)
+    {
+        auto col = *this->highlightColor_.get();
+        col.setAlpha(255);
+        colors.line = {col, col, col};
+    }
 
     // top line
     painter.fillRect(

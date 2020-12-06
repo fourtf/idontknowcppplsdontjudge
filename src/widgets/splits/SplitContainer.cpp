@@ -212,10 +212,15 @@ void SplitContainer::addSplit(Split *split)
     this->refreshTab();
 
     split->getChannelView().tabHighlightRequested.connect(
-        [this](HighlightState state) {
+        [this](HighlightState state, std::shared_ptr<QColor> color) {
             if (this->tab_ != nullptr)
             {
                 this->tab_->setHighlightState(state);
+
+                if (color != nullptr)
+                {
+                    this->tab_->setHighlightColor(color);
+                }
             }
         });
 
