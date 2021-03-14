@@ -62,6 +62,7 @@ public:
     virtual void initialize(Settings &settings, Paths &paths) override;
     virtual void save() override;
     void closeAll();
+    void setVisibilityAll(bool visible);
 
     int getGeneration() const;
     void incGeneration();
@@ -81,6 +82,8 @@ public:
 
     /// Signals
     pajlada::Signals::NoArgSignal gifRepaintRequested;
+
+    pajlada::Signals::Signal<bool> hideToTrayChanged;
 
     // This signal fires whenever views rendering a channel, or all views if the
     // channel is a nullptr, need to redo their layout

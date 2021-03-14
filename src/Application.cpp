@@ -154,6 +154,9 @@ int Application::run(QApplication &qtApp)
         this->windows->forceLayoutChannelViews();
     });
 
+    if (getSettings()->isHiddenToTray)
+        this->windows->setVisibilityAll(false);
+
     return qtApp.exec();
 }
 

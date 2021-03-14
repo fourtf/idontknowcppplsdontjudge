@@ -69,6 +69,25 @@ Window::Window(WindowType type)
         getSettings()->tabDirection.connect([this](int val) {
             this->notebook_->setTabDirection(NotebookTabDirection(val));
         });
+
+        actionShow_ = new QAction("Show", this);
+        actionExit_ = new QAction("Exit", this);
+        trayContextMenu_ = new QMenu(this);
+
+        trayContextMenu_->addAction(actionShow_);
+        trayContextMenu_->addSeparator();
+        trayContextMenu_->addAction(actionExit_);
+
+        trayIcon_ = new QSystemTrayIcon(this);
+        trayIcon_->setVisible(false);
+        trayIcon_->setIcon(QIcon(":/icon.ico"));
+        trayIcon_->setToolTip(Version::instance().fullVersion());
+        trayIcon_->setContextMenu(trayContextMenu_);
+
+        connect(actionShow_, SIGNAL(triggered()), this, SLOT(showAction()));
+        connect(actionExit_, SIGNAL(triggered()), this, SLOT(exitAction()));
+        connect(trayIcon_, SIGNAL(activated(QSystemTrayIcon::ActivationReason)),
+                this, SLOT(iconActivated(QSystemTrayIcon::ActivationReason)));
     }
     else
     {
@@ -84,6 +103,11 @@ WindowType Window::getType()
 SplitNotebook &Window::getNotebook()
 {
     return *this->notebook_;
+}
+
+QSystemTrayIcon *Window::getTrayIcon()
+{
+    return trayIcon_;
 }
 
 bool Window::event(QEvent *event)
@@ -113,27 +137,47 @@ bool Window::event(QEvent *event)
             }
         }
         break;
-
+        case QEvent::WindowStateChange:
+            if (this->type_ == WindowType::Main &&
+                this->windowState() & Qt::WindowMinimized)
+            {
+                if (getSettings()->enableTrayIcon &&
+                    getSettings()->hideToTrayOnMinimize)
+                {
+                    getApp()->windows->setVisibilityAll(false);
+                    event->ignore();
+                }
+            }
+            break;
         default:;
     }
 
     return BaseWindow::event(event);
 }
 
-void Window::closeEvent(QCloseEvent *)
+void Window::closeEvent(QCloseEvent *e)
 {
-    if (this->type_ == WindowType::Main)
+    if (this->type_ == WindowType::Main && getSettings()->enableTrayIcon &&
+        getSettings()->hideToTrayOnClose)
     {
-        auto app = getApp();
-        app->windows->save();
-        app->windows->closeAll();
+        e->ignore();
+        getApp()->windows->setVisibilityAll(false);
     }
-
-    this->closed.invoke();
-
-    if (this->type_ == WindowType::Main)
+    else
     {
-        QApplication::exit();
+        if (this->type_ == WindowType::Main)
+        {
+            auto app = getApp();
+            app->windows->save();
+            app->windows->closeAll();
+        }
+
+        this->closed.invoke();
+
+        if (this->type_ == WindowType::Main)
+        {
+            QApplication::exit();
+        }
     }
 }
 
@@ -426,6 +470,25 @@ void Window::addMenuBar()
     connect(prevTab, &QAction::triggered, this, [=] {
         this->notebook_->selectPreviousTab();
     });
+}
+
+void Window::iconActivated(QSystemTrayIcon::ActivationReason reason)
+{
+    if (reason == QSystemTrayIcon::ActivationReason::Trigger)
+    {
+        getApp()->windows->setVisibilityAll(
+            !getApp()->windows->getMainWindow().isVisible());
+    }
+}
+
+void Window::exitAction()
+{
+    QApplication::exit();
+}
+
+void Window::showAction()
+{
+    getApp()->windows->setVisibilityAll(true);
 }
 
 void Window::onAccountSelected()

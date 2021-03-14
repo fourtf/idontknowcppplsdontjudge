@@ -31,6 +31,7 @@ public:
         FramelessDraggable = 16,
         DontFocus = 32,
         Dialog = 64,
+        IgnoreTrayEvent = 128,
     };
 
     enum ActionOnFocusLoss { Nothing, Delete, Close, Hide };
@@ -80,6 +81,8 @@ protected:
     virtual void themeChangedEvent() override;
     virtual bool event(QEvent *event) override;
     virtual void wheelEvent(QWheelEvent *event) override;
+
+    virtual bool handleTrayEvent(bool visible);
 
     void mousePressEvent(QMouseEvent *event) override;
     void mouseReleaseEvent(QMouseEvent *event) override;

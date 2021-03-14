@@ -8,6 +8,7 @@
 - Major: Color mentions to match the mentioned users. You can disable this by unchecking "Color @usernames" under `Settings -> General -> Advanced (misc.)`. (#1963, #2284)
 - Major: Commands `/ignore` and `/unignore` have been renamed to `/block` and `/unblock` in order to keep consistency with Twitch's terms. (#2370)
 - Major: Added support for bit emotes - the ones you unlock after cheering to streamer. (#2550)
+- Major: Add ability to minimize Chatterino to system tray (#2448, #1358)
 - Minor: Added `/clearmessages` command - does what "Burger menu -> More -> Clear messages" does. (#2485)
 - Minor: Added `/marker` command - similar to webchat, it creates a stream marker. (#2360)
 - Minor: Added `/chatters` command showing chatter count. (#2344)
