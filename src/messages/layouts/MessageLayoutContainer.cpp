@@ -101,6 +101,8 @@ void MessageLayoutContainer::_addElement(MessageLayoutElement *element,
 
     int newLineHeight = element->getRect().height();
 
+    const bool isRtl = element->getText().isRightToLeft();
+
     // compact emote offset
     bool isCompactEmote =
         getSettings()->compactEmotes &&
@@ -138,6 +140,22 @@ void MessageLayoutContainer::_addElement(MessageLayoutElement *element,
         QPoint(this->currentX_ + xOffset,
                this->currentY_ - element->getRect().height() + yOffset));
 
+    // Shift previous elements to the right if they are RTL
+    if (isRtl)
+    {
+        for (const auto &prevElement : this->elements_)
+        {
+            // TODO(leon): Does this behave correctly for non-text elements
+            //             (e.g. emotes)?
+            if (!prevElement->getText().isRightToLeft())
+                continue;
+
+            const auto &posBeforeShift = prevElement->getRect().topLeft();
+            const auto &widthToShift = QPoint(element->getRect().width(), 0);
+            prevElement->setPosition(posBeforeShift + widthToShift);
+        }
+    }
+
     // add element
     this->elements_.push_back(std::unique_ptr<MessageLayoutElement>(element));
 
@@ -145,12 +163,18 @@ void MessageLayoutContainer::_addElement(MessageLayoutElement *element,
     if (!element->getCreator().getFlags().has(
             MessageElementFlag::ZeroWidthEmote))
     {
-        this->currentX_ += element->getRect().width();
+        if (!isRtl)
+            this->currentX_ += element->getRect().width();
     }
 
     if (element->hasTrailingSpace())
     {
-        this->currentX_ += this->spaceWidth_;
+        // When we add spacing between individual words, we need to make sure to
+        // add it on the correct side.
+        if (isRtl)
+            this->currentX_ -= this->spaceWidth_;
+        else
+            this->currentX_ += this->spaceWidth_;
     }
 }
 
