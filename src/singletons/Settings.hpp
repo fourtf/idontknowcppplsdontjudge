@@ -99,6 +99,11 @@ public:
     BoolSetting showTabLive = {"/appearance/showTabLiveButton", true};
     BoolSetting hidePreferencesButton = {"/appearance/hidePreferencesButton",
                                          false};
+    BoolSetting enableTrayIcon = {"/appearance/enableTrayIcon", true};
+    BoolSetting hideToTrayOnMinimize = {"/appearance/hideToTrayOnMinimize",
+                                        false};
+    BoolSetting hideToTrayOnClose = {"/appearance/hideToTrayOnClose", true};
+    BoolSetting isHiddenToTray = {"/appearance/isHiddenToTray", false};
     BoolSetting hideUserButton = {"/appearance/hideUserButton", false};
     BoolSetting enableSmoothScrolling = {"/appearance/smoothScrolling", true};
     BoolSetting enableSmoothScrollingNewMessages = {

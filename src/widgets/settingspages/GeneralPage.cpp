@@ -15,6 +15,7 @@
 #include "util/IncognitoBrowser.hpp"
 #include "util/StreamerMode.hpp"
 #include "widgets/BaseWindow.hpp"
+#include "widgets/Window.hpp"
 #include "widgets/helper/Line.hpp"
 #include "widgets/settingspages/GeneralPageView.hpp"
 
@@ -177,6 +178,12 @@ void GeneralPage::initLayout(GeneralPageView &layout)
         layout.addCheckbox("Show user button", s.hideUserButton, true);
     }
     layout.addCheckbox("Show which channels are live in tabs", s.showTabLive);
+
+    enableTrayIcon = layout.addCheckbox("Enable tray icon", s.enableTrayIcon);
+    hideToTrayOnClose = layout.addCheckbox(
+        "Hide to tray when closing main window", s.hideToTrayOnClose);
+    hideToTrayOnMinimize = layout.addCheckbox(
+        "Hide to tray when minimizing main window", s.hideToTrayOnMinimize);
 
     layout.addTitle("Chat");
 
@@ -664,6 +671,13 @@ void GeneralPage::initExtra()
                 cachePath->setToolTip(newPath);
             });
     }
+
+    getSettings()->enableTrayIcon.connect([&](bool enable) {
+        if (hideToTrayOnClose)
+            hideToTrayOnClose->setEnabled(enable);
+        if (hideToTrayOnMinimize)
+            hideToTrayOnMinimize->setEnabled(enable);
+    });
 }
 
 QString GeneralPage::getFont(const DropdownArgs &args) const

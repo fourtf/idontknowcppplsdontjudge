@@ -2,6 +2,7 @@
 
 #include "widgets/BaseWindow.hpp"
 
+#include <QSystemTrayIcon>
 #include <pajlada/settings/setting.hpp>
 #include <pajlada/signals/signal.hpp>
 #include <pajlada/signals/signalholder.hpp>
@@ -24,6 +25,7 @@ public:
 
     WindowType getType();
     SplitNotebook &getNotebook();
+    QSystemTrayIcon *getTrayIcon();
 
     pajlada::Signals::NoArgSignal closed;
 
@@ -47,7 +49,16 @@ private:
 
     pajlada::Signals::SignalHolder signalHolder_;
 
+    QSystemTrayIcon *trayIcon_ = nullptr;
+    QAction *actionExit_ = nullptr;
+    QAction *actionShow_ = nullptr;
+    QMenu *trayContextMenu_ = nullptr;
+
     friend class Notebook;
+private slots:
+    void iconActivated(QSystemTrayIcon::ActivationReason reason);
+    void exitAction();
+    void showAction();
 };
 
 }  // namespace chatterino

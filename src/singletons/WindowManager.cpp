@@ -627,6 +627,13 @@ void WindowManager::closeAll()
     }
 }
 
+void WindowManager::setVisibilityAll(bool visible)
+{
+    assertInGuiThread();
+    getMainWindow().getTrayIcon()->setVisible(!visible);
+    hideToTrayChanged.invoke(visible);
+}
+
 int WindowManager::getGeneration() const
 {
     return this->generation_;

@@ -324,6 +324,22 @@ void SettingsDialog::showEvent(QShowEvent *)
     this->ui_.search->setText("");
 }
 
+bool SettingsDialog::handleTrayEvent(bool visible)
+{
+    if (visible)
+    {
+        // Only reshow the settings dialog if it was visible before we
+        // hid the window to the tray bar
+        return wasVisible_;
+    }
+    else
+    {
+        wasVisible_ = isVisible();
+    }
+
+    return BaseWindow::handleTrayEvent(visible);
+}
+
 ///// Widget creation helpers
 void SettingsDialog::onOkClicked()
 {

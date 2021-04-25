@@ -43,6 +43,8 @@ protected:
     virtual void themeChangedEvent() override;
     virtual void showEvent(QShowEvent *) override;
 
+    bool handleTrayEvent(bool visible) override;
+
 private:
     void refresh();
 
@@ -70,6 +72,7 @@ private:
     std::vector<SettingsDialogTab *> tabs_;
     SettingsDialogTab *selectedTab_{};
     SettingsDialogTab *lastSelectedByUser_{};
+    bool wasVisible_ = false;
 
     friend class SettingsDialogTab;
 };

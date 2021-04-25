@@ -81,6 +81,24 @@ BaseWindow::BaseWindow(FlagsEnum<Flags> _flags, QWidget *parent)
         },
         this->connections_);
 
+    if (!_flags.has(IgnoreTrayEvent))
+    {
+        connections_.emplace_back(
+            getApp()->windows->hideToTrayChanged.connect([&](bool visible) {
+                if (handleTrayEvent(visible))
+                {
+                    setVisible(visible);
+                    if (visible)
+                    {
+                        activateWindow();
+                        raise();
+                        showNormal();
+                    }
+                    getSettings()->isHiddenToTray = !visible;
+                }
+            }));
+    }
+
     this->updateScale();
 
     createWindowShortcut(this, "CTRL+0", [] {
@@ -97,6 +115,8 @@ BaseWindow::BaseWindow(FlagsEnum<Flags> _flags, QWidget *parent)
 #endif
 
     this->themeChangedEvent();
+    auto visible = getSettings()->isHiddenToTray;
+    setVisible(visible);
     DebugCount::increase("BaseWindow");
 }
 
@@ -367,6 +387,11 @@ void BaseWindow::wheelEvent(QWheelEvent *event)
                 getSettings()->getClampedUiScale() - 0.1);
         }
     }
+}
+
+bool BaseWindow::handleTrayEvent(bool visible)
+{
+    return isVisible() != visible;
 }
 
 void BaseWindow::onFocusLost()
