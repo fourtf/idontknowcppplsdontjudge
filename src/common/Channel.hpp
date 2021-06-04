@@ -49,6 +49,9 @@ public:
     // SIGNALS
     pajlada::Signals::Signal<const QString &, const QString &, bool &>
         sendMessageSignal;
+    pajlada::Signals::Signal<const QString &, const QString &, const QString &,
+                             bool &>
+        replyMessageSignal;
     pajlada::Signals::Signal<MessagePtr &> messageRemovedFromStart;
     pajlada::Signals::Signal<MessagePtr &, boost::optional<MessageFlags>>
         messageAppended;
@@ -86,6 +89,7 @@ public:
     // CHANNEL INFO
     virtual bool canSendMessage() const;
     virtual void sendMessage(const QString &message);
+    virtual void replyMessage(const QString &msgid, const QString &message);
     virtual bool isMod() const;
     virtual bool isBroadcaster() const;
     virtual bool hasModRights() const;
