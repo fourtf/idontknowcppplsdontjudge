@@ -19,6 +19,7 @@
 #include "common/QLogging.hpp"
 #include "controllers/accounts/AccountController.hpp"
 #include "controllers/commands/CommandController.hpp"
+#include "controllers/ignores/IgnorePhrase.hpp"
 #include "debug/Benchmark.hpp"
 #include "messages/Emote.hpp"
 #include "messages/LimitedQueueSnapshot.hpp"
@@ -105,6 +106,38 @@ namespace {
                                     QDesktopServices::openUrl(QUrl(url.string));
                                 });
         };
+
+        // Ignore messages containing this emote
+        QString emoteName(emote.getCopyString());
+        QString emoteIgnoreRegex("(\\s|^)%1(\\s|$)");
+        if (!getSettings()->isIgnoredMessage(emoteIgnoreRegex.arg(emoteName)))
+        {
+            menu.addAction("Ignore this emote", [emoteName, emoteIgnoreRegex] {
+                getSettings()->ignoredMessages.append(
+                    IgnorePhrase(emoteIgnoreRegex.arg(emoteName), true, true,
+                                 QString(), true));
+            });
+        }
+        else
+        {
+            menu.addAction(
+                "Unignore this emote", [emoteName, emoteIgnoreRegex] {
+                    auto &ignored_messages =
+                        *getSettings()->ignoredMessages.readOnly();
+                    const auto it = std::find_if(
+                        ignored_messages.cbegin(), ignored_messages.cend(),
+                        [&](const IgnorePhrase &phrase) {
+                            return emoteIgnoreRegex.arg(emoteName) ==
+                                   phrase.getPattern();
+                        });
+                    if (it != ignored_messages.cend())
+                    {
+                        const int index = static_cast<int>(
+                            std::distance(ignored_messages.cbegin(), it));
+                        getSettings()->ignoredMessages.removeAt(index);
+                    }
+                });
+        }
 
         if (creatorFlags.has(MessageElementFlag::TwitchEmote))
         {
