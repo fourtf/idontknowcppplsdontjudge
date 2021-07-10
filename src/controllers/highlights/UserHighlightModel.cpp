@@ -26,11 +26,13 @@ HighlightPhrase UserHighlightModel::getItemFromRow(
         row[Column::Color]->data(Qt::DecorationRole).value<QColor>();
 
     return HighlightPhrase{
+        row[Column::Identifier]->data(Qt::DisplayRole).toString(),
         row[Column::Pattern]->data(Qt::DisplayRole).toString(),
         row[Column::ShowInMentions]->data(Qt::CheckStateRole).toBool(),
         row[Column::FlashTaskbar]->data(Qt::CheckStateRole).toBool(),
         row[Column::PlaySound]->data(Qt::CheckStateRole).toBool(),
         row[Column::UseRegex]->data(Qt::CheckStateRole).toBool(),
+        row[Column::GloballyEnabled]->data(Qt::CheckStateRole).toBool(),
         row[Column::CaseSensitive]->data(Qt::CheckStateRole).toBool(),
         row[Column::SoundPath]->data(Qt::UserRole).toString(),
         highlightColor};
@@ -40,11 +42,13 @@ HighlightPhrase UserHighlightModel::getItemFromRow(
 void UserHighlightModel::getRowFromItem(const HighlightPhrase &item,
                                         std::vector<QStandardItem *> &row)
 {
+    setStringItem(row[Column::Identifier], item.getId());
     setStringItem(row[Column::Pattern], item.getPattern());
     setBoolItem(row[Column::ShowInMentions], item.showInMentions());
     setBoolItem(row[Column::FlashTaskbar], item.hasAlert());
     setBoolItem(row[Column::PlaySound], item.hasSound());
     setBoolItem(row[Column::UseRegex], item.isRegex());
+    setBoolItem(row[Column::GloballyEnabled], item.isRegex());
     setBoolItem(row[Column::CaseSensitive], item.isCaseSensitive());
     setFilePathItem(row[Column::SoundPath], item.getSoundUrl());
     setColorItem(row[Column::Color], *item.getColor());

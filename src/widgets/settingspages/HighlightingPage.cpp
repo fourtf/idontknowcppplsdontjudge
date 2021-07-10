@@ -75,14 +75,16 @@ HighlightingPage::HighlightingPage()
                 view->addRegexHelpLink();
                 view->setTitles({"Pattern", "Show in\nMentions",
                                  "Flash\ntaskbar", "Play\nsound",
-                                 "Enable\nregex", "Case-\nsensitive",
-                                 "Custom\nsound", "Color"});
+                                 "Enable\nregex", "Globally\nEnabled",
+                                 "Case-\nsensitive", "Custom\nsound", "Color"});
                 view->getTableView()->horizontalHeader()->setSectionResizeMode(
                     QHeaderView::Fixed);
                 view->getTableView()->horizontalHeader()->setSectionResizeMode(
                     0, QHeaderView::Stretch);
+                view->getTableView()->horizontalHeader()->hideSection(
+                    HighlightModel::Column::Identifier);
 
-                // fourtf: make class extrend BaseWidget and add this to
+                // fourtf: make class extend BaseWidget and add this to
                 // dpiChanged
                 QTimer::singleShot(1, [view] {
                     view->getTableView()->resizeColumnsToContents();
@@ -90,10 +92,12 @@ HighlightingPage::HighlightingPage()
                 });
 
                 view->addButtonPressed.connect([] {
-                    getSettings()->highlightedMessages.append(HighlightPhrase{
-                        "my phrase", true, true, false, false, false, "",
-                        *ColorProvider::instance().color(
-                            ColorType::SelfHighlight)});
+                    getSettings()->highlightedMessages.append(
+                        std::make_shared<HighlightPhrase>(
+                            QUuid::createUuid().toString(QUuid::WithoutBraces),
+                            "my phrase", true, true, false, false, true, false,
+                            "",*ColorProvider::instance().color(
+                                    ColorType::SelfHighlight)));
                 });
 
                 QObject::connect(view->getTableView(), &QTableView::clicked,
@@ -121,19 +125,21 @@ HighlightingPage::HighlightingPage()
                 view->getTableView()->horizontalHeader()->hideSection(
                     HighlightModel::Column::UseRegex);
                 view->getTableView()->horizontalHeader()->hideSection(
+                    HighlightModel::Column::GloballyEnabled);
+                view->getTableView()->horizontalHeader()->hideSection(
                     HighlightModel::Column::CaseSensitive);
                 // Case-sensitivity doesn't make sense for user names so it is
                 // set to "false" by default & the column is hidden
                 view->setTitles({"Username", "Show in\nMentions",
                                  "Flash\ntaskbar", "Play\nsound",
-                                 "Enable\nregex", "Case-\nsensitive",
-                                 "Custom\nsound", "Color"});
+                                 "Enable\nregex", "Globally\nEnabled",
+                                 "Case-\nsensitive", "Custom\nsound", "Color"});
                 view->getTableView()->horizontalHeader()->setSectionResizeMode(
                     QHeaderView::Fixed);
                 view->getTableView()->horizontalHeader()->setSectionResizeMode(
                     0, QHeaderView::Stretch);
 
-                // fourtf: make class extrend BaseWidget and add this to
+                // fourtf: make class extend BaseWidget and add this to
                 // dpiChanged
                 QTimer::singleShot(1, [view] {
                     view->getTableView()->resizeColumnsToContents();
@@ -141,10 +147,11 @@ HighlightingPage::HighlightingPage()
                 });
 
                 view->addButtonPressed.connect([] {
-                    getSettings()->highlightedUsers.append(HighlightPhrase{
-                        "highlighted user", true, true, false, false, false, "",
-                        *ColorProvider::instance().color(
-                            ColorType::SelfHighlight)});
+                    getSettings()->highlightedUsers.append(
+                        HighlightPhrase{"", "highlighted user", true, true,
+                                        false, false, true, false, "",
+                                        *ColorProvider::instance().color(
+                                            ColorType::SelfHighlight)});
                 });
 
                 QObject::connect(view->getTableView(), &QTableView::clicked,
@@ -174,7 +181,7 @@ HighlightingPage::HighlightingPage()
                 view->getTableView()->horizontalHeader()->setSectionResizeMode(
                     0, QHeaderView::Stretch);
 
-                // fourtf: make class extrend BaseWidget and add this to
+                // fourtf: make class extend BaseWidget and add this to
                 // dpiChanged
                 QTimer::singleShot(1, [view] {
                     view->getTableView()->resizeColumnsToContents();
@@ -227,7 +234,7 @@ HighlightingPage::HighlightingPage()
                 view->getTableView()->horizontalHeader()->setSectionResizeMode(
                     0, QHeaderView::Stretch);
 
-                // fourtf: make class extrend BaseWidget and add this to
+                // fourtf: make class extend BaseWidget and add this to
                 // dpiChanged
                 QTimer::singleShot(1, [view] {
                     view->getTableView()->resizeColumnsToContents();

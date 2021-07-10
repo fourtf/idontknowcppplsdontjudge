@@ -24,8 +24,9 @@ public:
      *
      * Use this constructor when creating a new HighlightPhrase.
      */
-    HighlightPhrase(const QString &pattern, bool showInMentions, bool hasAlert,
-                    bool hasSound, bool isRegex, bool isCaseSensitive,
+    HighlightPhrase(QString identifier, const QString &pattern,
+                    bool showInMentions, bool hasAlert, bool hasSound,
+                    bool isRegex, bool isGloballyEnabled, bool isCaseSensitive,
                     const QString &soundUrl, QColor color);
 
     /**
@@ -33,10 +34,12 @@ public:
      *
      * Use this constructor when updating an existing HighlightPhrase's color.
      */
-    HighlightPhrase(const QString &pattern, bool showInMentions, bool hasAlert,
-                    bool hasSound, bool isRegex, bool isCaseSensitive,
+    HighlightPhrase(QString identifier, const QString &pattern,
+                    bool showInMentions, bool hasAlert, bool hasSound,
+                    bool isRegex, bool isGloballyEnabled, bool isCaseSensitive,
                     const QString &soundUrl, std::shared_ptr<QColor> color);
 
+    const QString &getId() const;
     const QString &getPattern() const;
     bool showInMentions() const;
     bool hasAlert() const;
@@ -69,6 +72,7 @@ public:
     bool hasCustomSound() const;
 
     bool isRegex() const;
+    bool isGloballyEnabled() const;
     bool isValid() const;
     bool isMatch(const QString &subject) const;
     bool isCaseSensitive() const;
@@ -84,16 +88,20 @@ public:
     static QColor FALLBACK_SUB_COLOR;
 
 private:
+    QString id_;
     QString pattern_;
     bool showInMentions_;
     bool hasAlert_;
     bool hasSound_;
     bool isRegex_;
+    bool isGloballyEnabled_;
     bool isCaseSensitive_;
     QUrl soundUrl_;
     std::shared_ptr<QColor> color_;
     QRegularExpression regex_;
 };
+
+using HighlightPhrasePtr = std::shared_ptr<HighlightPhrase>;
 
 }  // namespace chatterino
 
@@ -102,8 +110,9 @@ namespace pajlada {
 namespace {
     chatterino::HighlightPhrase constructError()
     {
-        return chatterino::HighlightPhrase(QString(), false, false, false,
-                                           false, false, QString(), QColor());
+        return chatterino::HighlightPhrase(QString(), QString(), false, false,
+                                           false, false, false, false,
+                                           QString(), QColor());
     }
 }  // namespace
 
@@ -114,11 +123,13 @@ struct Serialize<chatterino::HighlightPhrase> {
     {
         rapidjson::Value ret(rapidjson::kObjectType);
 
+        chatterino::rj::set(ret, "id", value.getId(), a);
         chatterino::rj::set(ret, "pattern", value.getPattern(), a);
         chatterino::rj::set(ret, "showInMentions", value.showInMentions(), a);
         chatterino::rj::set(ret, "alert", value.hasAlert(), a);
         chatterino::rj::set(ret, "sound", value.hasSound(), a);
         chatterino::rj::set(ret, "regex", value.isRegex(), a);
+        chatterino::rj::set(ret, "globalEnable", value.isGloballyEnabled(), a);
         chatterino::rj::set(ret, "case", value.isCaseSensitive(), a);
         chatterino::rj::set(ret, "soundUrl", value.getSoundUrl().toString(), a);
         chatterino::rj::set(ret, "color",
@@ -140,20 +151,24 @@ struct Deserialize<chatterino::HighlightPhrase> {
             return constructError();
         }
 
+        QString _id;
         QString _pattern;
         bool _showInMentions = true;
         bool _hasAlert = true;
         bool _hasSound = false;
         bool _isRegex = false;
+        bool _isGloballyEnabled = true;
         bool _isCaseSensitive = false;
         QString _soundUrl;
         QString encodedColor;
 
+        chatterino::rj::getSafe(value, "id", _id);
         chatterino::rj::getSafe(value, "pattern", _pattern);
         chatterino::rj::getSafe(value, "showInMentions", _showInMentions);
         chatterino::rj::getSafe(value, "alert", _hasAlert);
         chatterino::rj::getSafe(value, "sound", _hasSound);
         chatterino::rj::getSafe(value, "regex", _isRegex);
+        chatterino::rj::getSafe(value, "globalEnable", _isGloballyEnabled);
         chatterino::rj::getSafe(value, "case", _isCaseSensitive);
         chatterino::rj::getSafe(value, "soundUrl", _soundUrl);
         chatterino::rj::getSafe(value, "color", encodedColor);
@@ -162,9 +177,9 @@ struct Deserialize<chatterino::HighlightPhrase> {
         if (!_color.isValid())
             _color = chatterino::HighlightPhrase::FALLBACK_HIGHLIGHT_COLOR;
 
-        return chatterino::HighlightPhrase(_pattern, _showInMentions, _hasAlert,
-                                           _hasSound, _isRegex,
-                                           _isCaseSensitive, _soundUrl, _color);
+        return chatterino::HighlightPhrase(
+            _id, _pattern, _showInMentions, _hasAlert, _hasSound, _isRegex,
+            _isGloballyEnabled, _isCaseSensitive, _soundUrl, _color);
     }
 };
 

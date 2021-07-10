@@ -16,23 +16,27 @@ QColor HighlightPhrase::FALLBACK_SUB_COLOR = QColor(196, 102, 255, 100);
 
 bool HighlightPhrase::operator==(const HighlightPhrase &other) const
 {
-    return std::tie(this->pattern_, this->showInMentions_, this->hasSound_,
-                    this->hasAlert_, this->isRegex_, this->isCaseSensitive_,
-                    this->soundUrl_, this->color_) ==
-           std::tie(other.pattern_, other.showInMentions_, other.hasSound_,
-                    other.hasAlert_, other.isRegex_, other.isCaseSensitive_,
-                    other.soundUrl_, other.color_);
+    return std::tie(this->id_, this->pattern_, this->showInMentions_,
+                    this->hasSound_, this->hasAlert_, this->isRegex_,
+                    this->isCaseSensitive_, this->soundUrl_, this->color_,
+                    this->isGloballyEnabled_) ==
+           std::tie(other.id_, other.pattern_, other.showInMentions_,
+                    other.hasSound_, other.hasAlert_, other.isRegex_,
+                    other.isCaseSensitive_, other.soundUrl_, other.color_,
+                    other.isGloballyEnabled_);
 }
 
-HighlightPhrase::HighlightPhrase(const QString &pattern, bool showInMentions,
-                                 bool hasAlert, bool hasSound, bool isRegex,
-                                 bool isCaseSensitive, const QString &soundUrl,
-                                 QColor color)
+HighlightPhrase::HighlightPhrase(QString identifier, const QString &pattern,
+                                 bool showInMentions, bool hasAlert,
+                                 bool hasSound, bool isRegex,
+                                 bool isGloballyEnabled, bool isCaseSensitive,
+                                 const QString &soundUrl, QColor color)
     : pattern_(pattern)
     , showInMentions_(showInMentions)
     , hasAlert_(hasAlert)
     , hasSound_(hasSound)
     , isRegex_(isRegex)
+    , isGloballyEnabled_(isGloballyEnabled)
     , isCaseSensitive_(isCaseSensitive)
     , soundUrl_(soundUrl)
     , regex_(isRegex_
@@ -44,17 +48,23 @@ HighlightPhrase::HighlightPhrase(const QString &pattern, bool showInMentions,
                                    : QRegularExpression::CaseInsensitiveOption))
 {
     this->color_ = std::make_shared<QColor>(color);
+    this->id_ = identifier.isEmpty()
+                    ? QUuid::createUuid().toString(QUuid::WithoutBraces)
+                    : std::move(identifier);
 }
 
-HighlightPhrase::HighlightPhrase(const QString &pattern, bool showInMentions,
-                                 bool hasAlert, bool hasSound, bool isRegex,
-                                 bool isCaseSensitive, const QString &soundUrl,
+HighlightPhrase::HighlightPhrase(QString identifier, const QString &pattern,
+                                 bool showInMentions, bool hasAlert,
+                                 bool hasSound, bool isRegex,
+                                 bool isGloballyEnabled, bool isCaseSensitive,
+                                 const QString &soundUrl,
                                  std::shared_ptr<QColor> color)
     : pattern_(pattern)
     , showInMentions_(showInMentions)
     , hasAlert_(hasAlert)
     , hasSound_(hasSound)
     , isRegex_(isRegex)
+    , isGloballyEnabled_(isGloballyEnabled)
     , isCaseSensitive_(isCaseSensitive)
     , soundUrl_(soundUrl)
     , color_(std::move(color))
@@ -66,6 +76,9 @@ HighlightPhrase::HighlightPhrase(const QString &pattern, bool showInMentions,
                  (isCaseSensitive_ ? QRegularExpression::NoPatternOption
                                    : QRegularExpression::CaseInsensitiveOption))
 {
+    this-> id_ = identifier.isEmpty()
+                    ? QUuid::createUuid().toString(QUuid::WithoutBraces)
+                    : std::move(identifier);
 }
 
 const QString &HighlightPhrase::getPattern() const
@@ -98,6 +111,11 @@ bool HighlightPhrase::isRegex() const
     return this->isRegex_;
 }
 
+bool HighlightPhrase::isGloballyEnabled() const
+{
+    return this->isGloballyEnabled_;
+}
+
 bool HighlightPhrase::isValid() const
 {
     return !this->pattern_.isEmpty() && this->regex_.isValid();
@@ -116,6 +134,11 @@ bool HighlightPhrase::isCaseSensitive() const
 const QUrl &HighlightPhrase::getSoundUrl() const
 {
     return this->soundUrl_;
+}
+
+const QString &HighlightPhrase::getId() const
+{
+    return this->id_;
 }
 
 const std::shared_ptr<QColor> HighlightPhrase::getColor() const
