@@ -8,6 +8,7 @@
 - Minor: Updated to Emoji v13.1 (#2958)
 - Minor: Added "Open in: new tab, browser player, streamlink" in twitch link context menu. (#2988)
 - Minor: Sender username in automod messages shown to moderators shows correct color and display name. (#2967)
+- Minor: Duplicate spaces now count towards the display message length (#3002)
 - Bugfix: Now deleting cache files that weren't modified in the past 14 days. (#2947)
 - Bugfix: Fixed large timeout durations in moderation buttons overlapping with usernames or other buttons. (#2865, #2921)
 - Bugfix: Middle mouse click no longer scrolls in not fully populated usercards and splits. (#2933)
