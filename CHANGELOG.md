@@ -2,6 +2,8 @@
 
 ## Unversioned
 
+- Minor: Added autocompletion in #/whispers for Twitch emotes, Global Bttv/Ffz emotes and emojis. (#2999)
+
 ## 2.3.3
 
 - Major: Added username autocompletion popup menu when typing usernames with an @ prefix. (#1979, #2866)
